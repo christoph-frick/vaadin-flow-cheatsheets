@@ -1,0 +1,136 @@
+{:styles {:font {:fontname "Arial"}
+          :mono {:fontname "Monospace"}
+
+          :view {:styles [:font]
+                 :shape :folder
+                 :style :filled
+                 :gradientangle 90
+                 :fillcolor "#aaaaaa, 0.5:#eeeeee"}
+
+          :note {:styles [:font]
+                 :shape :note
+                 :style :filled
+                 :gradientangle 90
+                 :fillcolor "#ffffaa, 0.5:#ffffee"}
+
+          :note-edge {:style :dotted
+                      :arrowhead :none
+                      :arrowtail :none}
+
+          :fallthru-edge {:color "#666666"}
+
+          :action-style {:color "#996666"
+                         :fontcolor "#663333"}
+
+          :action {:styles [:action-style]
+                   :shape :record}
+
+          :active-edge-1 {:styles [:action-style]
+                          :dir :back
+                          :arrowtail :inv
+                          :style :bold}
+          :active-edge-2 {:styles [:action-style]
+                          :style :bold}
+
+          :event {:styles [:mono]
+                  :shape :hexagon}
+
+          :edge-default {:styles [:font]
+                         :fontsize 10}
+          :node-default {:styles [:font]
+                         :fontsize 10}}
+
+ :graph (digraph
+          {:styles [:font]
+           :compound true}
+          (edge {:styles [:edge-default]})
+          (node {:styles [:node-default]})
+
+          [:init {:label "Browser"
+                   :styles [:view]
+                   :shape :tab}]
+
+          [:init :start {:styles [:fallthru-edge]}]
+
+          [:start {:label "Start"
+                   :styles [:view]
+                   :shape :circle}]
+
+          [:before-leave-event {:label "BeforeLeaveEvent"
+                                :styles [:event]}]
+          [:note-before-leave-event {:styles [:note]
+                                     :label [:font "Prevent " [:b "leaving"] " a view"]}]
+          [:before-leave-event :note-before-leave-event {:styles [:note-edge]}]
+
+          [:before-enter-event {:label "BeforeEnterEvent"
+                                :styles [:event]}]
+          [:note-before-enter-event {:styles [:note]
+                                     :label [:font "Prevent " [:b "entering"] " a view"]}]
+          [:note-before-enter-event :before-enter-event {:styles [:note-edge]}]
+
+          [:after-navigation-event {:label "AfterNavigationEvent"
+                                    :styles [:event]}]
+          [:note-after-navigation-event {:styles [:note]
+                                         :label "Update content"}]
+          [:note-after-navigation-event :after-navigation-event {:styles [:note-edge]}]
+
+          [:view {:label "View"
+                  :styles [:view]}]
+
+          [:postpone {:label [:table {:border 0}
+                              [:tr [:td {:align :left} [:font {:face "Monospace"} "contNavActn = event.postpone()"]]]
+                              [:tr [:td {:align :left} [:font [:b "Don't"] " navigate away yet"]]]
+                              [:tr [:td {:align :left} "Provides callback to still continue"]]]
+                      :styles [:action]}]
+
+          [:continue-navigation-action {:label [:table {:border 0}
+                                                [:tr [:td {:align :left} [:font {:face "Monospace"} "contNavActn.proceed()"]]]
+                                                [:tr [:td {:align :left} [:font [:b "Continue"] " navigating away"]]]]
+                                        :styles [:action]}]
+
+          [:reroute {:label [:table {:border 0}
+                             [:tr [:td {:align :left} [:font {:face "Monospace"} "event.rerouteTo(...)"]]]
+                             [:tr [:td {:align :left} "Route to different view"]]
+                             [:tr [:td {:align :left} [:font [:b "Keep"] "URL/History"]]]]
+                     :styles [:action]}]
+
+          [:forward {:label [:table {:border 0}
+                             [:tr [:td {:align :left} [:font {:face "Monospace"} "event.forwardTo(...)"]]]
+                             [:tr [:td {:align :left} "Route to different view"]]
+                             [:tr [:td {:align :left} [:font [:b "Update"] "URL/History"]]]]
+                     :styles [:action]}]
+
+          [:navigate {:label [:table {:border 0}
+                              [:tr [:td {:align :left} [:font {:face "Monospace"} "ui.navigateTo(...)"]]]
+                              [:tr [:td {:align :left} "away from current view"]]]
+                      :styles [:action]}]
+
+          [:view :navigate {:styles [:active-edge-1]}]
+          [:navigate :before-leave-event {:styles [:active-edge-2]}]
+
+          [:start :before-enter-event {:styles [:fallthru-edge]
+                                       :minlen 2}]
+
+          [:before-leave-event :before-enter-event {:styles [:fallthru-edge]}]
+
+          [:before-leave-event :postpone {:styles [:active-edge-1]}]
+          [:postpone :view {:styles [:fallthru-edge]}]
+          [:postpone :continue-navigation-action {:styles [:active-edge-1]}]
+          [:continue-navigation-action :before-leave-event {:styles [:active-edge-2]}]
+
+          [:before-leave-event :reroute {:styles [:active-edge-1]}]
+          [:before-leave-event :forward {:styles [:active-edge-1]}]
+
+          [:before-enter-event :after-navigation-event {:styles [:fallthru-edge]
+                                                        :minlen 2}]
+
+          [:before-enter-event :reroute {:styles [:active-edge-1]}]
+          [:reroute :start {:styles [:active-edge-2]}]
+
+          [:before-enter-event :forward {:styles [:active-edge-1]}]
+          [:forward :start {:styles [:active-edge-2]}]
+
+          [:after-navigation-event :view {:styles [:fallthru-edge]
+                                          :minlen 2}]
+
+          (rank :same :start :before-enter-event :after-navigation-event :view))}

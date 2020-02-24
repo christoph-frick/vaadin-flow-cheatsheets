@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: warn
+    net.ofnir: debug
