@@ -1,4 +1,6 @@
-all: navigation-life-cycle.png navigation-life-cycle.pdf
+SOURCES := $(wildcard *.edn)
+
+all: $(SOURCES:.edn=.pdf) $(SOURCES:.edn=.png)
 
 clean:
 	rm -rf *.dot
