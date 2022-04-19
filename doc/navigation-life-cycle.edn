@@ -56,19 +56,25 @@
                    :styles [:view]
                    :shape :circle}]
 
-          [:before-leave-event {:label "BeforeLeaveEvent"
+          [:before-leave-event {:label "BeforeLeaveListener/Observer"
                                 :styles [:event]}]
           [:note-before-leave-event {:styles [:note]
                                      :label [:font "Prevent " [:b "leaving"] " a view"]}]
           [:before-leave-event :note-before-leave-event {:styles [:note-edge]}]
 
-          [:before-enter-event {:label "BeforeEnterEvent"
+          [:before-enter-event {:label "BeforeEnterListener/Observer"
                                 :styles [:event]}]
           [:note-before-enter-event {:styles [:note]
                                      :label [:font "Prevent " [:b "entering"] " a view"]}]
           [:note-before-enter-event :before-enter-event {:styles [:note-edge]}]
 
-          [:after-navigation-event {:label "AfterNavigationEvent"
+          [:has-url-parameter {:label "HasUrlParameter"
+                               :styles [:event]}]
+          [:note-has-url-parameter {:styles [:note]
+                                     :label "Structured parameter handling"}]
+          [:note-has-url-parameter :has-url-parameter {:styles [:note-edge]}]
+
+          [:after-navigation-event {:label "AfterNavigationListener/Observer"
                                     :styles [:event]}]
           [:note-after-navigation-event {:styles [:note]
                                          :label "Update content"}]
@@ -121,7 +127,12 @@
           [:before-leave-event :reroute {:styles [:active-edge-1]}]
           [:before-leave-event :forward {:styles [:active-edge-1]}]
 
-          [:before-enter-event :after-navigation-event {:styles [:fallthru-edge]
+          [:before-enter-event :has-url-parameter {:styles [:fallthru-edge]
+                                                   :minlen 2}]
+
+          [:has-url-parameter :reroute {:styles [:active-edge-1]}]
+          [:has-url-parameter :forward {:styles [:active-edge-1]}]
+          [:has-url-parameter :after-navigation-event {:styles [:fallthru-edge]
                                                         :minlen 2}]
 
           [:before-enter-event :reroute {:styles [:active-edge-1]}]
@@ -133,4 +144,4 @@
           [:after-navigation-event :view {:styles [:fallthru-edge]
                                           :minlen 2}]
 
-          (rank :same :start :before-enter-event :after-navigation-event :view))}
+          (rank :same :start :before-enter-event :has-url-parameter :after-navigation-event :view))}
