@@ -30,6 +30,7 @@ import com.vaadin.flow.server.UIInitEvent
 import com.vaadin.flow.server.UIInitListener
 import com.vaadin.flow.server.VaadinServiceInitListener
 import com.vaadin.flow.spring.annotation.EnableVaadin
+import groovy.transform.InheritConstructors
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
@@ -109,28 +110,45 @@ class LowPriorityListener extends PriorityListener {
 class AttachedContent extends Div implements BeforeLeaveObserver, BeforeEnterObserver, AfterNavigationObserver {
 
     final Class rootClass
+    final String marker
 
-    AttachedContent(Class rootClass) {
+    AttachedContent(Class rootClass, int nr) {
         this.rootClass = rootClass
-        Tracer.trace(rootClass, "Content c'tor")
-        add(new Span("Content for ${rootClass.simpleName}"))
+        this.marker = "Content #$nr"
+        Tracer.trace(rootClass, mark("c'tor"))
+        add(new Span(mark("for ${rootClass.simpleName}")))
+    }
+
+    String mark(String text) {
+        "$marker: $text"
     }
 
     @Override
     void beforeLeave(BeforeLeaveEvent event) {
-        Tracer.trace(rootClass, "Content BeforeLeaveObserver")
+        Tracer.trace(rootClass, mark("BeforeLeaveObserver"))
     }
 
     @Override
     void beforeEnter(BeforeEnterEvent event) {
-        Tracer.trace(rootClass, "Content BeforeEnterObserver")
+        Tracer.trace(rootClass, mark("BeforeEnterObserver"))
     }
 
     @Override
     void afterNavigation(AfterNavigationEvent _) {
-        Tracer.trace(rootClass, "Content AfterNavigationObserver")
+        Tracer.trace(rootClass, mark("AfterNavigationObserver"))
     }
 
+}
+
+class AttachedContentLayout extends Div {
+
+    AttachedContentLayout(Class rootClass, int startNr) {
+        def parts = (1..3).collect { new AttachedContent(rootClass, startNr + it) }
+        // intentionally break the order to find out, if insertion order or placement inside the DOM wins
+        add(parts[0])
+        addComponentAtIndex(0, parts[1])
+        add(parts[2])
+    }
 }
 
 abstract class AbstractLayout extends Composite<Div> implements RouterLayout {
@@ -186,12 +204,13 @@ class OuterLayout extends AbstractLayout implements TracingObservers {
 
     OuterLayout() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(OuterLayout))
         add(new Div(new RouterLink("Home", HomeView)))
         add(new Div(new RouterLink("Another View", AnotherView)))
+        add(new Div(new RouterLink("Nested attached listeners", NestedAttachedListenersView)))
         add(new Div(new RouterLink("Parameter View (no param)", ParameterView)))
         add(new Div(new RouterLink("Parameter View (with param)", ParameterView, "Param")))
         add(new Div(new RouterLink("Wildcard Parameter View", WildcardParameterView)))
+        add(new AttachedContent(OuterLayout, 1))
     }
 
 }
@@ -201,7 +220,7 @@ class InnerLayout extends AbstractLayout implements TracingObservers {
 
     InnerLayout() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(InnerLayout))
+        add(new AttachedContent(InnerLayout, 10))
     }
 
 }
@@ -211,7 +230,7 @@ class HomeView extends Div implements TracingObservers {
 
     HomeView() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(HomeView))
+        add(new AttachedContent(HomeView, 100))
     }
 
 }
@@ -221,7 +240,27 @@ class AnotherView extends Div implements TracingObservers {
 
     AnotherView() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(AnotherView))
+        add(new AttachedContent(AnotherView, 100))
+    }
+
+}
+
+@Route(value = "nestedAttachedListeners", layout = InnerLayout)
+class NestedAttachedListenersView extends Div implements TracingObservers {
+
+    NestedAttachedListenersView() {
+        Tracer.trace(getClass(), "c'tor")
+        add(new AttachedContentLayout(NestedAttachedListenersView, 100))
+        add(
+                new Div(
+                        new AttachedContent(NestedAttachedListenersView, 1000),
+                        new AttachedContentLayout(NestedAttachedListenersView, 2000),
+                ),
+                new Div(
+                        new AttachedContentLayout(NestedAttachedListenersView, 3000),
+                        new AttachedContent(NestedAttachedListenersView, 4000),
+                ),
+        )
     }
 
 }
@@ -231,7 +270,7 @@ class ParameterView extends Div implements TracingObservers, HasUrlParameter<Str
 
     ParameterView() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(ParameterView))
+        add(new AttachedContent(ParameterView, 100))
     }
 
     @Override
@@ -245,7 +284,7 @@ class WildcardParameterView extends Div implements TracingObservers, HasUrlParam
 
     WildcardParameterView() {
         Tracer.trace(getClass(), "c'tor")
-        add(new AttachedContent(WildcardParameter))
+        add(new AttachedContent(WildcardParameter, 100))
     }
 
     @Override
