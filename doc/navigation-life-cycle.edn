@@ -40,6 +40,10 @@
           :node-default {:styles [:font]
                          :fontsize 10}}
 
+ :macros {(table %&) [:table {:border 0} %&]
+          (trl %&) [:tr [:td {:align :left} %&]]
+          (monospace %&) [:font {:face "Monospace"} %&]}
+
  :graph (digraph
           {:styles [:font]
            :compound true}
@@ -83,32 +87,32 @@
           [:view {:label "View"
                   :styles [:view]}]
 
-          [:postpone {:label [:table {:border 0}
-                              [:tr [:td {:align :left} [:font {:face "Monospace"} "contNavActn = event.postpone()"]]]
-                              [:tr [:td {:align :left} [:font [:b "Don't"] " navigate away yet"]]]
-                              [:tr [:td {:align :left} "Provides callback to still continue"]]]
+          [:postpone {:label (table
+                              (trl (monospace "contNavActn = event.postpone()"))
+                              (trl [:font [:b "Don't"] " navigate away yet"])
+                              (trl "Provides callback to still continue"))
                       :styles [:action]}]
 
-          [:continue-navigation-action {:label [:table {:border 0}
-                                                [:tr [:td {:align :left} [:font {:face "Monospace"} "contNavActn.proceed()"]]]
-                                                [:tr [:td {:align :left} [:font [:b "Continue"] " navigating away"]]]]
+          [:continue-navigation-action {:label (table
+                                                (trl (monospace "contNavActn.proceed()"))
+                                                (trl [:font [:b "Continue"] " navigating away"]))
                                         :styles [:action]}]
 
-          [:reroute {:label [:table {:border 0}
-                             [:tr [:td {:align :left} [:font {:face "Monospace"} "event.rerouteTo(...)"]]]
-                             [:tr [:td {:align :left} "Route to different view"]]
-                             [:tr [:td {:align :left} [:font [:b "Keep"] "URL/History"]]]]
+          [:reroute {:label (table
+                             (trl (monospace "event.rerouteTo(...)"))
+                             (trl "Route to different view")
+                             (trl [:font [:b "Keep"] "URL/History"]))
                      :styles [:action]}]
 
-          [:forward {:label [:table {:border 0}
-                             [:tr [:td {:align :left} [:font {:face "Monospace"} "event.forwardTo(...)"]]]
-                             [:tr [:td {:align :left} "Route to different view"]]
-                             [:tr [:td {:align :left} [:font [:b "Update"] "URL/History"]]]]
+          [:forward {:label (table
+                             (trl (monospace "event.forwardTo(...)"))
+                             (trl "Route to different view")
+                             (trl [:font [:b "Update"] "URL/History"]))
                      :styles [:action]}]
 
-          [:navigate {:label [:table {:border 0}
-                              [:tr [:td {:align :left} [:font {:face "Monospace"} "ui.navigateTo(...)"]]]
-                              [:tr [:td {:align :left} "away from current view"]]]
+          [:navigate {:label (table
+                              (trl (monospace "ui.navigateTo(...)"))
+                              (trl "away from current view"))
                       :styles [:action]}]
 
           [:view :navigate {:styles [:active-edge-1]}]
