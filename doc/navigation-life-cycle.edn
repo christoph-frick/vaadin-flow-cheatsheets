@@ -118,10 +118,10 @@
           [:view :navigate {:styles [:active-edge-1]}]
           [:navigate :before-leave-event {:styles [:active-edge-2]}]
 
-          [:start :before-enter-event {:styles [:fallthru-edge]
+          [:start :has-url-parameter {:styles [:fallthru-edge]
                                        :minlen 2}]
 
-          [:before-leave-event :before-enter-event {:styles [:fallthru-edge]}]
+          [:before-leave-event :start {:styles [:fallthru-edge]}]
 
           [:before-leave-event :postpone {:styles [:active-edge-1]}]
           [:postpone :view {:styles [:fallthru-edge]}]
@@ -131,12 +131,13 @@
           [:before-leave-event :reroute {:styles [:active-edge-1]}]
           [:before-leave-event :forward {:styles [:active-edge-1]}]
 
-          [:before-enter-event :has-url-parameter {:styles [:fallthru-edge]
+          [:has-url-parameter :before-enter-event {:styles [:fallthru-edge]
                                                    :minlen 2}]
 
           [:has-url-parameter :reroute {:styles [:active-edge-1]}]
           [:has-url-parameter :forward {:styles [:active-edge-1]}]
-          [:has-url-parameter :after-navigation-event {:styles [:fallthru-edge]
+
+          [:before-enter-event :after-navigation-event {:styles [:fallthru-edge]
                                                         :minlen 2}]
 
           [:before-enter-event :reroute {:styles [:active-edge-1]}]
@@ -148,4 +149,6 @@
           [:after-navigation-event :view {:styles [:fallthru-edge]
                                           :minlen 2}]
 
-          (rank :same :start :before-enter-event :has-url-parameter :after-navigation-event :view))}
+          (rank :same :start :before-enter-event :has-url-parameter :after-navigation-event :view)
+
+          (rank :same :navigate :postpone))}
