@@ -17,21 +17,24 @@
                       :arrowhead :none
                       :arrowtail :none}
 
-          :fallthru-edge {:color "#666666"
-                          :minlen 2}
+          :passive-style {:color "#996666"
+                          :fontcolor "#663333"
+                          :style :bold}
 
-          :action-style {:color "#996666"
-                         :fontcolor "#663333"}
+          :action-style {:color "#666666"
+                         :fontcolor "#333333"}
 
           :action {:styles [:action-style]
                    :shape :record}
 
           :active-edge-1 {:styles [:action-style]
                           :dir :back
-                          :arrowtail :inv
-                          :style :bold}
+                          :arrowtail :inv}
 
-          :event {:styles [:mono]
+          :fallthru-edge {:styles [:passive-style]
+                          :minlen 2}
+
+          :event {:styles [:mono :passive-style]
                   :shape :hexagon}
 
           :edge-default {:styles [:font]
