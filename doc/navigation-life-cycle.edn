@@ -17,7 +17,8 @@
                       :arrowhead :none
                       :arrowtail :none}
 
-          :fallthru-edge {:color "#666666"}
+          :fallthru-edge {:color "#666666"
+                          :minlen 2}
 
           :action-style {:color "#996666"
                          :fontcolor "#663333"}
@@ -28,8 +29,6 @@
           :active-edge-1 {:styles [:action-style]
                           :dir :back
                           :arrowtail :inv
-                          :style :bold}
-          :active-edge-2 {:styles [:action-style]
                           :style :bold}
 
           :event {:styles [:mono]
@@ -116,39 +115,40 @@
                       :styles [:action]}]
 
           [:view :navigate {:styles [:active-edge-1]}]
-          [:navigate :before-leave-event {:styles [:active-edge-2]}]
+          [:navigate :start {:styles [:active-edge-1]}]
 
-          [:start :has-url-parameter {:styles [:fallthru-edge]
-                                       :minlen 2}]
+          [:start :before-leave-event {:styles [:fallthru-edge]}]
 
-          [:before-leave-event :start {:styles [:fallthru-edge]}]
+          [:before-leave-event :has-url-parameter {:styles [:fallthru-edge]}]
 
           [:before-leave-event :postpone {:styles [:active-edge-1]}]
           [:postpone :view {:styles [:fallthru-edge]}]
           [:postpone :continue-navigation-action {:styles [:active-edge-1]}]
-          [:continue-navigation-action :before-leave-event {:styles [:active-edge-2]}]
+          [:continue-navigation-action :start {:styles [:active-edge-1]}]
 
           [:before-leave-event :reroute {:styles [:active-edge-1]}]
           [:before-leave-event :forward {:styles [:active-edge-1]}]
 
-          [:has-url-parameter :before-enter-event {:styles [:fallthru-edge]
-                                                   :minlen 2}]
+          [:has-url-parameter :before-enter-event {:styles [:fallthru-edge]}]
 
           [:has-url-parameter :reroute {:styles [:active-edge-1]}]
           [:has-url-parameter :forward {:styles [:active-edge-1]}]
 
-          [:before-enter-event :after-navigation-event {:styles [:fallthru-edge]
-                                                        :minlen 2}]
+          [:before-enter-event :after-navigation-event {:styles [:fallthru-edge]}]
 
           [:before-enter-event :reroute {:styles [:active-edge-1]}]
-          [:reroute :start {:styles [:active-edge-2]}]
+          [:reroute :start {:styles [:active-edge-1]}]
 
           [:before-enter-event :forward {:styles [:active-edge-1]}]
-          [:forward :start {:styles [:active-edge-2]}]
+          [:forward :start {:styles [:active-edge-1]}]
 
-          [:after-navigation-event :view {:styles [:fallthru-edge]
-                                          :minlen 2}]
+          [:after-navigation-event :view {:styles [:fallthru-edge]}]
 
-          (rank :same :start :before-enter-event :has-url-parameter :after-navigation-event :view)
+          (rank :same :note-before-leave-event :before-leave-event)
+          (rank :same :note-has-url-parameter :has-url-parameter)
+          (rank :same :note-before-enter-event :before-enter-event)
+          (rank :same :note-after-navigation-event :after-navigation-event)
 
-          (rank :same :navigate :postpone))}
+          #_(rank :same :init :note-before-leave-event :note-has-url-parameter :note-before-enter-event :note-after-navigation-event)
+
+          #_(rank :same :start :before-leave-event :before-enter-event :has-url-parameter :after-navigation-event :view))}
