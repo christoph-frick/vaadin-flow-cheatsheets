@@ -125,7 +125,7 @@
           [:before-leave-event :has-url-parameter {:styles [:fallthru-edge]}]
 
           [:before-leave-event :postpone {:styles [:active-edge-1]}]
-          [:postpone :view {:styles [:fallthru-edge]}]
+          [:postpone :view {:styles [:active-edge-1]}]
           [:postpone :continue-navigation-action {:styles [:active-edge-1]}]
           [:continue-navigation-action :start {:styles [:active-edge-1]}]
 
