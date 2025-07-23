@@ -1,6 +1,19 @@
+HELP.md
 .gradle
 build/
 target/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
 ### IntelliJ IDEA ###
 .idea
@@ -9,17 +22,26 @@ target/
 *.ipr
 out/
 
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
 ### VAADIN ###
-/node
-/node_modules
 /package-lock.json
 /package.json
-/webpack.config.js
-/webpack.generated.js
-/pnpm-lock.yaml
-/pnpmfile.js
+/node_modules
 /tsconfig.json
 /types.d.ts
-/src/main/resources/META-INF/resources/themes/app-theme/app-theme.generated.js
-/frontend/generated
-/frontend/index.html
+/vite.config.ts
+/vite.generated.ts
+/.flow-node-tasks.lock
+/src/main/bundles
+/src/main/frontend/generated/
+/src/main/frontend/index.html
+/src/main/frontend/themes/app-theme/theme-editor.css

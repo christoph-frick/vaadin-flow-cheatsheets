@@ -1,29 +1,37 @@
 plugins {
-    id 'org.springframework.boot' version "${springbootGradlePluginVersion}"
-    id 'com.vaadin' version "${vaadinGradlePluginVersion}"
+    alias(libs.plugins.version)
+    alias(libs.plugins.spring)
+    alias(libs.plugins.vaadin)
     id 'groovy'
 }
 
 group = 'net.ofnir'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+}
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url = "https://maven.vaadin.com/vaadin-prereleases"
-    }
+    // maven {
+    //     url = "https://maven.vaadin.com/vaadin-prereleases"
+    // }
 }
 
 bootRun {
-    dependsOn vaadinPrepareFrontend
     environment("SPRING_PROFILES_ACTIVE", "dev")
     systemProperties = System.properties
 }
 
 bootJar {
-    dependsOn vaadinPrepareFrontend, vaadinBuildFrontend
+    dependsOn vaadinBuildFrontend
+    archiveClassifier = "fat"
+}
+
+vaadin {
+    reactEnable = false // remove for react router and components in the client
 }
 
 configurations {
@@ -33,14 +41,34 @@ configurations {
     }
 }
 
+tasks.named('dependencyUpdates').configure {
+    gradleReleaseChannel = 'current'
+    revision = 'release'
+    rejectVersionIf {
+        it.candidate.group=="org.springframework.boot" && !it.candidate.version.startsWith("3.5") ||
+        it.candidate.group=="org.apache.groovy" && !it.candidate.version.startsWith("4.")
+    }
+}
+
 dependencies {
-    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-    implementation platform("org.apache.groovy:groovy-bom:${getAt('groovy.version')}")
-    implementation platform("com.vaadin:vaadin-bom:${getAt('vaadin.version')}")
+    implementation platform(libs.springboot.bom)
+    implementation platform(libs.vaadin.bom)
+    implementation platform(libs.groovy.bom)
 
     implementation "org.apache.groovy:groovy"
-    implementation("com.vaadin:vaadin-spring-boot-starter")
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "com.vaadin:vaadin-spring-boot-starter", {
+        exclude group: 'com.vaadin', module: 'hilla' // remove for hilla
+        exclude group: 'com.vaadin', module: 'flow-react' // remove for react router and components in the client
+        exclude group: 'com.vaadin', module: 'vaadin-dev'
+    }
 
-    developmentOnly platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    developmentOnly platform(libs.springboot.bom)
+    developmentOnly platform(libs.vaadin.bom)
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'com.vaadin:vaadin-dev', {
+        exclude group: 'com.vaadin', module: 'hilla-dev' // remove for hilla
+        exclude group: 'com.vaadin', module: 'copilot'
+    }
 }

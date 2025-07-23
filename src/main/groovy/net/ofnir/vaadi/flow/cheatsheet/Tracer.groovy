@@ -1,4 +1,4 @@
-package net.ofnir.v14gradle
+package net.ofnir.vaadi.flow.cheatsheet
 
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.DetachEvent

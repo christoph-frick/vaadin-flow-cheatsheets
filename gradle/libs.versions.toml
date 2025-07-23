@@ -1,0 +1,15 @@
+[versions]
+version-version = "0.52.0"
+spring-version = "3.5.3"
+vaadin-version = "24.8.4"
+groovy-version = "4.0.28"
+
+[plugins]
+version = { id = "com.github.ben-manes.versions", version.ref = "version-version" }
+spring = { id = "org.springframework.boot", version.ref = "spring-version" }
+vaadin = { id = "com.vaadin", version.ref = "vaadin-version" }
+
+[libraries]
+springboot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-version" }
+vaadin-bom = { module = "com.vaadin:vaadin-bom", version.ref = "vaadin-version" }
+groovy-bom = { module = "org.apache.groovy:groovy-bom", version.ref = "groovy-version" }
